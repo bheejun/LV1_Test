@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-    //index.html 출력
+    //
     @GetMapping("/")
     public ModelAndView home(){
         return new ModelAndView("index");
@@ -26,7 +26,7 @@ public class PostController {
         return postService.createPost(requestDto);
     }
     //Read
-    @GetMapping("api/posts")
+    @GetMapping("/api/posts")
     public List<Post> getPosts(){
         return postService.getPosts();
     }
