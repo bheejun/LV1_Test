@@ -47,13 +47,13 @@ public class PostService {
 
     }
     //id기준으로 db에서 정보 찾아서 검사해서 없으면 메세지 띄우고, 있으면 비밀번호 체크해서 맞으면 삭제, 틀리면 예외처리 메세지
-    public Long deletePost(Long id){
-        PostRequestDto postRequestDto = new PostRequestDto();
+    public Long deletePost(Long id, PostRequestDto requestDto) {
         Post post = postRepository.findById(id).orElseThrow(
-                ()-> new IllegalArgumentException("존재하지 않는 id")
+                () -> new IllegalArgumentException("존재하지 않는 id")
         );
 
-        if(!post.checkPassword(postRequestDto.getPassword())){
+        // requestDto로부터 받은 비밀번호로 비밀번호 확인
+        if (!post.checkPassword(requestDto.getPassword())) {
             throw new IllegalArgumentException("비밀번호 틀림");
         }
         postRepository.deleteById(id);
