@@ -26,6 +26,13 @@ public class PostService {
         return postRepository.findAllByOrderByCreatedAtDesc();
     }
 
+    public Post getPost(Long id){
+        return postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 id")
+        );
+
+    }
+
     //id기준으로 db에서 정보 찾아서 검사해서 없으면 메세지 띄우고 있으면 비밀번호 체크해서 맞으면 업데이트, 틀리면 예외처리한 메세지 출력
     public Long updatePost(Long id, PostRequestDto requestDto){
         Post post = postRepository.findById(id).orElseThrow(

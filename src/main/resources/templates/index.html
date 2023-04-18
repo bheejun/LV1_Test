@@ -21,7 +21,7 @@
       // 2. 메모 목록을 불러와서 HTML로 붙입니다.
       $.ajax({
         type: "GET",
-        url: "/api/memos",
+        url: "/api/posts",
         data: {},
         success: function (response) {
           for (let i = 0; i < response.length; i++) {
@@ -70,7 +70,7 @@
                         <div class="footer">
                             <img id="${id}-edit" class="icon-start-edit" src="/images/edit.png" alt="" onclick="editPost('${id}')">
                             <img id="${id}-delete" class="icon-delete" src="/images/delete.png" alt="" onclick="deleteOne('${id}')">
-                            <img id="${id}-submit" class="icon-end-edit" src="/images/done.png" alt="" onclick="updatePost('${id}')">
+                            <img id="${id}-submit" class="icon-end-edit" src="/images/done.png" alt="" onclick="submitEdit('${id}')">
                         </div>
                     </div>`;
     }
@@ -102,41 +102,34 @@
     // }
 
     // 메모를 생성합니다.
-    function updatePost() {
-      // 1. 입력 필드에서 값을 읽어옴
-      const postId = document.querySelector('#postId').value;
-      const username = document.querySelector('#username').value;
-      const title = document.querySelector('#title').value;
-      const password = document.querySelector('#password').value;
-      const content = document.querySelector('#content').value;
+    function submitEdit(id) {
+      // 1. 작성 대상 메모의 username과 contents 를 확인합니다.
+      let username = $(`#${id}-username`).text().trim();
+      let content = $(`#${id}-textarea`).val().trim();
+      let title = $(`#${id}-title`).val().trim();
+      let password = $(`#${id}-password`).val.trim();
 
       // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
-      if (isValidContents(content) === false) {
+      if (isValidContents(contents) == false) {
         return;
       }
 
-      // 3. 전달할 데이터를 JSON으로 만듭니다.
-      const data = { username, title, password, content };
+      // 3. 전달할 data JSON으로 만듭니다.
+      let data = {'username': username, 'content': content,'title': title, 'password':password};
 
-      // 4. PUT /api/memos/{id} 에 데이터를 전송합니다.
-      fetch(`/api/memos/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-              .then(response => response.json())
-              .then(result => {
-                // 성공적으로 수정된 경우, 화면을 새로고침하여 수정된 게시글을 업데이트합니다.
-                alert('게시글이 성공적으로 수정되었습니다.');
-                window.location.reload();
-              })
-              .catch(error => {
-                // 수정이 실패한 경우, 에러 메시지를 출력합니다.
-                alert('게시글 수정에 실패하였습니다: ' + error.message);
-              });
+      // 4. PUT /api/memos/{id} 에 data를 전달합니다.
+      $.ajax({
+        type: "PUT",
+        url: `/api/posts/${id}`,
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          alert('메시지 변경에 성공하였습니다.');
+          window.location.reload();
+        }
+      });
     }
+
 
 
     // 수정 버튼을 눌렀을 때, 기존 작성 내용을 textarea 에 전달합니다.
@@ -157,46 +150,40 @@
     }
 
     // 메모를 수정합니다.
-
     function writePost() {
-      // 1. 입력 필드에서 값을 읽어옴
-      const username = document.querySelector('#username').value;
-      const title = document.querySelector('#title').value;
-      const password = document.querySelector('#password').value;
-      const content = document.querySelector('#content').value;
+      // 1. 작성한 메모를 불러옵니다.
+      let content = $('#content').val();
+      let title = $('#title').val();
+      let password = $('#password').val();
+      let username = $('#username').val();
 
       // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
-      if (isValidContents(content) === false) {
+      if (isValidContents(content) == false) {
         return;
       }
 
-      // 3. 전달할 데이터를 JSON으로 만듭니다.
-      const data = { username, title, password, content };
+      // 3. genRandomName 함수를 통해 익명의 username을 만듭니다.
 
-      // 4. POST /api/memos 에 데이터를 전송합니다.
-      fetch('/api/memos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-              .then(response => response.json())
-              .then(result => {
-                // 성공적으로 게시된 경우, 화면을 새로고침하여 게시글을 업데이트합니다.
-                alert('게시글이 성공적으로 작성되었습니다.');
-                window.location.reload();
-              })
-              .catch(error => {
-                // 게시가 실패한 경우, 에러 메시지를 출력합니다.
-                alert('게시글 작성에 실패하였습니다: ' + error.message);
-              });
+
+      // 4. 전달할 data JSON으로 만듭니다.
+      let data = {'username': username, 'content': content,'title': title, 'password':password};
+
+      $.ajax({
+        type: "POST",
+        url: "/api/memos",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          alert('메시지가 성공적으로 작성되었습니다.');
+          window.location.reload();
+        }
+      });
     }
 
     function deleteOne(id) {
       $.ajax({
         type: "DELETE",
-        url: `/api/memos/${id}`,
+        url: `/api/posts/${id}`,
         success: function (response) {
           alert('메시지 삭제에 성공하였습니다.');
           window.location.reload();

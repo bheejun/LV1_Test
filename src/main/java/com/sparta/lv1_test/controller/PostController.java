@@ -2,6 +2,7 @@ package com.sparta.lv1_test.controller;
 
 import com.sparta.lv1_test.dto.PostRequestDto;
 import com.sparta.lv1_test.entity.Post;
+import com.sparta.lv1_test.repository.PostRepository;
 import com.sparta.lv1_test.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,12 @@ public class PostController {
     public Long deletePost(@PathVariable Long id){
         return postService.deletePost(id);
     }
+
+    @GetMapping("/api/posts/{id}")
+    public Post getPost(@PathVariable Long id) {
+        return postService.getPost(id);
+    }
+
 
 
 }
