@@ -47,7 +47,7 @@ public class PostService {
         Post post = new Post(requestDto);
         post.setAuthor(user.getUsername());
         postRepository.save(post);
-        System.out.println("success");
+
 
         return post;
 
