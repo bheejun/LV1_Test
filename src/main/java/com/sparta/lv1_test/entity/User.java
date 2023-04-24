@@ -16,7 +16,7 @@ public class User extends Timestamped{
     // nullable: null 허용 여부
     // unique: 중복 허용 여부 (false 일때 중복 허용)
     @Column(nullable = false, unique = true)
-    private String userId;
+    private String username;
 
     @Column(nullable = false)
     private String password;
@@ -24,13 +24,19 @@ public class User extends Timestamped{
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 
 
 
-    public User(String username, String password, String email) {
-        this.userId = username;
+
+    public User(String username, String password, String email, UserRoleEnum role) {
+        this.username = username;
         this.password = password;
         this.email = email;
+        this.role = role;
+
 
     }
 
