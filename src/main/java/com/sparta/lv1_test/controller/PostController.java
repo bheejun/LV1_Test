@@ -33,7 +33,7 @@ public class PostController {
     }
     //Update
     @PutMapping("/api/posts/{id}")
-    public Long updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
+    public Post updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
         return postService.updatePost(id, requestDto);
     }
     //Delete
