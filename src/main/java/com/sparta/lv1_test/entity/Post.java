@@ -5,8 +5,10 @@ import com.sparta.lv1_test.dto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class Post extends Timestamped{
@@ -19,29 +21,30 @@ public class Post extends Timestamped{
     private String title;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
-    private String password;
+    private String author;
+
+    public void setAuthor(String author){
+        this.author = author;
+    }
+
+
 
     // dto에 담아서 반환
     public Post (PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
-        this.username = postRequestDto.getUsername();
         this.content = postRequestDto.getContent();
-        this.password = postRequestDto.getPassword();
+
     }
     // dto에 담아서 반환
     public void updatePost(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
-        this.username = postRequestDto.getUsername();
         this.content = postRequestDto.getContent();
     }
+
+
     // 비밀번호 체크
-    public boolean checkPassword(String password) {
-        return this.password.equals(password);
-    }
+
 }

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 
@@ -27,8 +28,6 @@ public class UserService {
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
         String email = signupRequestDto.getEmail();
-
-//        if(username.length()<=10)
 
 
         Optional<User> validate = userRepository.findByUsername(username);
@@ -56,10 +55,10 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public String login(LoginRequestDto loginRequestDto, HttpServletResponse response){
-        String userId = loginRequestDto.getUsername();
+        String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
-        User user = userRepository.findByUsername(userId).orElseThrow(
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
 

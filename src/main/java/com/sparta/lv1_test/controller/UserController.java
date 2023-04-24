@@ -4,6 +4,7 @@ import com.sparta.lv1_test.dto.LoginRequestDto;
 import com.sparta.lv1_test.dto.SignupRequestDto;
 import com.sparta.lv1_test.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signup(@RequestBody SignupRequestDto signupRequestDto){
+    public String signup(@Valid @RequestBody SignupRequestDto signupRequestDto){
 //        System.out.println("username "+signupRequestDto.getUserId());
 
         return userService.signup(signupRequestDto);

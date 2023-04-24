@@ -1,13 +1,15 @@
 package com.sparta.lv1_test.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+
 import lombok.NoArgsConstructor;
 
-@Getter
+
+
+
 @NoArgsConstructor
 @Entity(name = "users")
-public class User extends Timestamped{
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +29,8 @@ public class User extends Timestamped{
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
+
 
 
 
