@@ -2,11 +2,13 @@ package com.sparta.lv1_test.entity;
 
 import jakarta.persistence.*;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
 
 
+@Getter
 @NoArgsConstructor
 @Entity(name = "users")
 public class User {
