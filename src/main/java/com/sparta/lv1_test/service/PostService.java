@@ -3,9 +3,14 @@ package com.sparta.lv1_test.service;
 
 import com.sparta.lv1_test.dto.PostRequestDto;
 import com.sparta.lv1_test.entity.Post;
+import com.sparta.lv1_test.jwt.JwtUtil;
 import com.sparta.lv1_test.repository.PostRepository;
+import com.sparta.lv1_test.repository.UserRepsotiry;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,15 +19,19 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
 
+    private final UserRepsotiry userRepository;
+    private final JwtUtil jwtUtil;
 
-    //save 기능을 이용해서 db에 Entity에서 Dto에 담아서 반환된 정보를 저장한다
-    public Post createPost(PostRequestDto requestDto){
-        Post post = new Post(requestDto);
+    @Transactional
+    public Post createPost(PostRequestDto requestDto, HttpServletRequest request){
+        // 유효한 토큰값 username에 넣기
+        Post post = new Post(tockencheck(request).getSubject(),requestDto);
         postRepository.save(post);
         return post;
     }
-    // 생성된 날짜 기준으로 내림차순으로 정렬해서 리스트에 담아서 반환해줌
-    public List<Post> getPosts() {
+
+    @Transactional(readOnly = true)
+    public List<Post> getPosts() { //게시물 생성순으로 전체조회
         return postRepository.findAllByOrderByCreatedAtDesc();
     }
 
@@ -30,35 +39,53 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 id")
         );
-
     }
 
-    //id기준으로 db에서 정보 찾아서 검사해서 없으면 메세지 띄우고 있으면 비밀번호 체크해서 맞으면 업데이트, 틀리면 예외처리한 메세지 출력
-    public Long updatePost(Long id, PostRequestDto requestDto){
+
+    @Transactional
+    public Long updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request){
+
+        //유효한 토큰값 체크
+        Claims claims = tockencheck(request);
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new IllegalArgumentException("존재하지 않는 id")
         );
-
-        if(!post.checkPassword(requestDto.getPassword())){
-            throw new IllegalArgumentException("비밀번호 틀림");
+        if(claims.getSubject().equals(post.getUsername())){
+            post.updatePost(requestDto);
         }
-        post.updatePost(requestDto);
         return post.getId();
-
     }
-    //id기준으로 db에서 정보 찾아서 검사해서 없으면 메세지 띄우고, 있으면 비밀번호 체크해서 맞으면 삭제, 틀리면 예외처리 메세지
-    public Long deletePost(Long id, PostRequestDto requestDto) {
+
+
+    @Transactional
+    public Long deletePost(Long id, HttpServletRequest request) {
+        Claims claims =  tockencheck(request);
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 id")
         );
 
-        // requestDto로부터 받은 비밀번호로 비밀번호 확인
-        if (!post.checkPassword(requestDto.getPassword())) {
-            throw new IllegalArgumentException("비밀번호 틀림");
+        if(claims.getSubject().equals(post.getUsername())){
+            postRepository.deleteById(id);
+        }else{
+            throw new IllegalArgumentException("삭제권한이 없습니다");
         }
-        postRepository.deleteById(id);
         return id;
     }
 
 
+    public Claims tockencheck(HttpServletRequest request){
+        //토큰값 가져오기
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        //토큰값이 null이 아니고 유효한 토큰값인지 확인
+        if(token != null){
+            if(jwtUtil.validateToken(token)){
+                claims = jwtUtil.getUserInfoFromToken(token);
+            }else{
+                throw new IllegalArgumentException("Token Error");
+            }
+        }
+        return jwtUtil.getUserInfoFromToken(token);
+    }
 }

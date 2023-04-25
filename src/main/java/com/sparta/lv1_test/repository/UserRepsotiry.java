@@ -1,0 +1,11 @@
+package com.sparta.lv1_test.repository;
+
+import com.sparta.lv1_test.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface UserRepsotiry extends JpaRepository<User, Long> {
+
+    Optional<User> findByUsername(String username);
+}
