@@ -7,6 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Getter
 @Setter
 @Entity
@@ -30,6 +36,15 @@ public class Post extends Timestamped{
         this.author = author;
     }
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comment> comments = new HashSet<>();
+
+
+    public List<Comment> getCommentList() {
+        return new ArrayList<>(comments);
+    }
+
+
 
 
     // dto에 담아서 반환
@@ -43,6 +58,7 @@ public class Post extends Timestamped{
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
     }
+
 
 
     // 비밀번호 체크

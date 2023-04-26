@@ -1,12 +1,15 @@
 package com.sparta.lv1_test.controller;
 
 import com.sparta.lv1_test.dto.PostRequestDto;
+import com.sparta.lv1_test.dto.PostResponseDto;
 import com.sparta.lv1_test.entity.Post;
 import com.sparta.lv1_test.repository.PostRepository;
 import com.sparta.lv1_test.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,44 +18,46 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class PostController {
-    @Autowired
     private final PostService postService;
-    //
-    @GetMapping("/")
-    public ModelAndView home(){
-        return new ModelAndView("index");
 
+    @GetMapping("/")
+    public ModelAndView home() {
+        return new ModelAndView("index");
     }
 
     //Create
+
     @PostMapping("/api/posts")
-    public Post createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request){
-        return postService.createPost(requestDto, request);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+        PostResponseDto post = postService.createPost(requestDto, request);
+        return new ResponseEntity<>(post, HttpStatus.CREATED);
     }
+
+
     //Read
     @GetMapping("/api/posts")
-    public List<Post> getPosts(){
-        return postService.getPosts();
+    public ResponseEntity<List<PostResponseDto>> getPosts() {
+        List<PostResponseDto> posts = postService.getPosts();
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping("/api/posts/{id}")
-    public Post getPost(@PathVariable Long id){
-        return postService.getPost(id);
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id) {
+        PostResponseDto post = postService.getPost(id);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
+
     //Update
     @PutMapping("/api/posts/{id}")
-    public Post updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request) {
-        return postService.updatePost(id, requestDto, request);
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request) {
+        PostResponseDto post = postService.updatePost(id, requestDto, request);
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @DeleteMapping("/api/posts/{id}")
-    public Long deletePost(@PathVariable Long id, HttpServletRequest request) {
-        return postService.deletePost(id, request);
+    public ResponseEntity<Long> deletePost(@PathVariable Long id, HttpServletRequest request) {
+        Long deletedPostId = postService.deletePost(id, request);
+        return new ResponseEntity<>(deletedPostId, HttpStatus.OK);
     }
-
-
-
-
-
-
 }
+
