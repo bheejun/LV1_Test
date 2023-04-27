@@ -5,9 +5,10 @@ import com.sparta.lv1_test.entity.UserRoleEnum;
 import com.sparta.lv1_test.jwt.JwtUtil;
 import com.sparta.lv1_test.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Service;
 
 
-
+@Service
 public class GetInformation {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;

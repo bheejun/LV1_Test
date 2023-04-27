@@ -28,7 +28,7 @@ public class PostService {
     public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest request) {
         String username = getInformation.getUsernameFromToken(request);
         User user = userRepository.findByUsername(username).orElseThrow(
-                ()-> new IllegalArgumentException("id does not exist")
+                ()-> new IllegalArgumentException("id 존재하지 않습니다")
         );
         Post post = new Post(requestDto);
         post.setAuthor(user.getUsername());

@@ -40,9 +40,7 @@ public class Post extends Timestamped{
     private Set<Comment> comments = new HashSet<>();
 
 
-    public List<Comment> getCommentList() {
-        return new ArrayList<>(comments);
-    }
+
 
 
 
