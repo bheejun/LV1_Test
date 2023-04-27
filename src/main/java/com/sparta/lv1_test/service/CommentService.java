@@ -29,7 +29,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto createComment(Long postId, CommentRequestDto requestDto, HttpServletRequest request) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다"));
 
         String username = getInformation.getUsernameFromToken(request);
         Comment comment = new Comment(requestDto.getContent(), username);
@@ -41,13 +41,13 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto updateComment(Long postId, Long commentId, CommentRequestDto requestDto, HttpServletRequest request) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다"));
         String username = getInformation.getUsernameFromToken(request);
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다"));
 
         if (!comment.getAuthor().equals(username) && !getInformation.isAdmin(username)) {
-            throw new IllegalArgumentException("You can only update your own posts or must be an admin");
+            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다");
         }
 
         comment.setContent(requestDto.getContent());
@@ -57,13 +57,13 @@ public class CommentService {
 
     @Transactional
     public Long deleteComment(Long postId, Long commentId, HttpServletRequest request) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다"));
         String username = getInformation.getUsernameFromToken(request);
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다"));
 
         if (!comment.getAuthor().equals(username) && !getInformation.isAdmin(username)) {
-            throw new IllegalArgumentException("You can only update your own posts or must be an admin");
+            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다");
         }
 
         commentRepository.delete(comment);

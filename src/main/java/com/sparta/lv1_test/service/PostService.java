@@ -46,24 +46,22 @@ public class PostService {
 
     public PostResponseDto getPost(Long id){
         Post post =  postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("id does not exist")
+                () -> new IllegalArgumentException("id가 존재하지 않습니다")
         );
         return new PostResponseDto(post);
     }
 
     public PostResponseDto updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
         String username = getInformation.getUsernameFromToken(request);
-        System.out.println("Username: "+ username);
+
 
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("id does not exist")
+                () -> new IllegalArgumentException("id가 존재하지 않습니다")
         );
 
-        boolean isAdmin = getInformation.isAdmin(username);
-        System.out.println("Is admin: " + isAdmin);
 
         if (!post.getAuthor().equals(username) && !getInformation.isAdmin(username)) {
-            throw new IllegalArgumentException("You can only update your own posts or must be an admin");
+            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다");
         }
 
         post.updatePost(requestDto);
@@ -76,11 +74,11 @@ public class PostService {
         String username = getInformation.getUsernameFromToken(request);
 
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("id does not exist")
+                () -> new IllegalArgumentException("id가 존재하지 않습니다")
         );
 
         if (!post.getAuthor().equals(username) && !getInformation.isAdmin(username)) {
-            throw new IllegalArgumentException("You can only update your own posts or must be an admin");
+            throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다");
         }
 
         postRepository.deleteById(id);
