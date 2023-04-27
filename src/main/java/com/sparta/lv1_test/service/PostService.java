@@ -5,6 +5,7 @@ import com.sparta.lv1_test.dto.PostRequestDto;
 import com.sparta.lv1_test.dto.PostResponseDto;
 import com.sparta.lv1_test.entity.Post;
 import com.sparta.lv1_test.entity.User;
+import com.sparta.lv1_test.exception.TokenInvalidException;
 import com.sparta.lv1_test.repository.PostRepository;
 import com.sparta.lv1_test.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ public class PostService {
     @Transactional
     public PostResponseDto createPost(PostRequestDto requestDto, HttpServletRequest request) {
         String username = getInformation.getUsernameFromToken(request);
+
         User user = userRepository.findByUsername(username).orElseThrow(
                 ()-> new IllegalArgumentException("id 존재하지 않습니다")
         );

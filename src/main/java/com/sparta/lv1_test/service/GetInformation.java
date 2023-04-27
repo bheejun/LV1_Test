@@ -3,6 +3,7 @@ package com.sparta.lv1_test.service;
 import com.sparta.lv1_test.entity.User;
 import com.sparta.lv1_test.entity.UserRoleEnum;
 import com.sparta.lv1_test.jwt.JwtUtil;
+import com.sparta.lv1_test.exception.TokenInvalidException;
 import com.sparta.lv1_test.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class GetInformation {
         String token = jwtUtil.resolveToken(request);
 
         if (token == null || !jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("Invalid token");
+            throw new TokenInvalidException("토큰이 유효하지 않습니다");
         }
 
         String username = jwtUtil.getUserInfoFromToken(token).getSubject();

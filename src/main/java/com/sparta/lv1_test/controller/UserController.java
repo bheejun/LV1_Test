@@ -6,6 +6,8 @@ import com.sparta.lv1_test.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,18 +17,16 @@ public class UserController {
 
     private final UserService userService;
 
-    @ResponseBody
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
-
-        return userService.login(loginRequestDto, response);
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        String token = userService.login(loginRequestDto, response);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping("/signup")
-    public String signup(@Valid @RequestBody SignupRequestDto signupRequestDto){
-//        System.out.println("username "+signupRequestDto.getUserId());
-
-        return userService.signup(signupRequestDto);
+    public ResponseEntity<String> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+        String message = userService.signup(signupRequestDto);
+        return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
 
