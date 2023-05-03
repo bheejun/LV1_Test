@@ -8,6 +8,7 @@ import com.sparta.lv1_test.jwt.JwtUtil;
 import com.sparta.lv1_test.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
@@ -62,9 +64,10 @@ public class UserService {
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
 
-        if(!user.getPassword().equals(password)){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        if(!passwordEncoder.matches(password, user.getPassword())){
+            throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
 
         return "success";

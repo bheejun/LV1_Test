@@ -2,16 +2,14 @@ package com.sparta.lv1_test.controller;
 
 import com.sparta.lv1_test.dto.PostRequestDto;
 import com.sparta.lv1_test.dto.PostResponseDto;
-import com.sparta.lv1_test.entity.Post;
-import com.sparta.lv1_test.repository.PostRepository;
 import com.sparta.lv1_test.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -24,12 +22,12 @@ public class PostController {
     public ModelAndView home() {
         return new ModelAndView("index");
     }
-
     //Create
 
+
     @PostMapping("/api/posts")
-    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto requestDto, HttpServletRequest request) {
-        PostResponseDto post = postService.createPost(requestDto, request);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto requestDto, Authentication authentication) {
+        PostResponseDto post = postService.createPost(requestDto, authentication);
         return new ResponseEntity<>(post, HttpStatus.CREATED);
     }
 
@@ -49,14 +47,14 @@ public class PostController {
 
     //Update
     @PutMapping("/api/posts/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, HttpServletRequest request) {
-        PostResponseDto post = postService.updatePost(id, requestDto, request);
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, Authentication authentication) {
+        PostResponseDto post = postService.updatePost(id, requestDto, authentication);
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @DeleteMapping("/api/posts/{id}")
-    public ResponseEntity<Long> deletePost(@PathVariable Long id, HttpServletRequest request) {
-        Long deletedPostId = postService.deletePost(id, request);
+    public ResponseEntity<Long> deletePost(@PathVariable Long id, Authentication authentication) {
+        Long deletedPostId = postService.deletePost(id, authentication);
         return new ResponseEntity<>(deletedPostId, HttpStatus.OK);
     }
 }
